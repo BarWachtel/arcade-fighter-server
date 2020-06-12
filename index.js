@@ -16,7 +16,6 @@ const WaitingPlayers = [];
 const PairedClients = {};
 
 wss.on('connection', function connection(ws, request) {
-  ws.send('Hola senior!');
   const clientId = ws._socket._handle.fd;
   ClientWebSockets[clientId] = ws;
   ws.on('message', function incoming(message) {
