@@ -1,14 +1,24 @@
 {
-    "name": "app-service-hello-world",
-    "description": "Simple Hello World Node.js sample for Azure App Service",
-    "version": "0.0.1",
-    "private": true,
-    "license": "MIT",
-    "author": "Microsoft",
-    "scripts": {
-        "start": "node index.js"
-    },
-    "dependencies": {
-        "ws": "^7.3.0"
-    }
+  "name": "arcade-fighter-server",
+  "description": "Simple Hello World Node.js sample for Azure App Service",
+  "version": "0.0.1",
+  "private": true,
+  "license": "MIT",
+  "author": "Microsoft",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "ws": "^7.3.0"
+  },
+  "main": "index.js",
+  "devDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/BarWachtel/arcade-fighter-server.git"
+  },
+  "bugs": {
+    "url": "https://github.com/BarWachtel/arcade-fighter-server/issues"
+  },
+  "homepage": "https://github.com/BarWachtel/arcade-fighter-server#readme"
 }
