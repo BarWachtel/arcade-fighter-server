@@ -6,13 +6,16 @@
   "license": "MIT",
   "author": "Microsoft",
   "scripts": {
-    "start": "node index.js"
+    "start": "node index.js",
+    "start-dev": "PORT=8081 nodemon index.js"
   },
   "dependencies": {
     "ws": "^7.3.0"
   },
+  "devDependencies": {
+    "nodemon": "^2.0.4"
+  },
   "main": "index.js",
-  "devDependencies": {},
   "repository": {
     "type": "git",
     "url": "git+https://github.com/BarWachtel/arcade-fighter-server.git"
