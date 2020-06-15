@@ -1,10 +1,11 @@
 const WebSocket = require('ws');
-const MSG_TYPES = {
-  JOIN: 'join',
-  START: 'start',
-  ACTION: 'action',
-  EFFECT: 'effect',
-  ERROR: 'error'
+const MessageTypes = {
+  Join: 'Join',
+  Start: 'Start',
+  Action: 'Action',
+  Effect: 'Effect',
+  LatencyAdjustment: 'LatencyAdjustment',
+  Error: 'Error'
 };
 
 const PORT = process.env.PORT || 8081;
@@ -22,14 +23,17 @@ wss.on('connection', function connection(ws, request) {
     const msg = JSON.parse(message);
     console.log(`Client ${clientId} sent: ${msg.type}`);
     switch (msg.type) {
-      case MSG_TYPES.JOIN:
+      case MessageTypes.Join:
         handleJoin(clientId);
         break;
-      case MSG_TYPES.ACTION:
+      case MessageTypes.Action:
         handleAction(clientId, msg.data);
         break;
-      case MSG_TYPES.EFFECT:
+      case MessageTypes.Effect:
         handleEffect(clientId, msg.data);
+        break;
+      case MessageTypes.LatencyAdjustment:
+        handleLatencyAdjust(clientId, msg.data);
         break;
       default:
         ws.send(error('Unrecognized message type'));
@@ -44,27 +48,38 @@ function handleJoin(clientId) {
   }
 }
 
-function handleAction(clientId, action) {
-  const pairedClientWs = getClientWebsocket(clientId);
-
+function handleAction(clientId, actionData) {
   const actionMsg = {
     clientId: clientId,
-    action: action
+    action: actionData
   };
 
-  pairedClientWs.send(response(MSG_TYPES.ACTION, actionMsg));
+  relayMessageToPairedClient(clientId, response(MessageTypes.Action, actionMsg));
 }
 
-function handleEffect(clientId, effect) {
-  console.log(`sending effect to ${PairedClients[clientId]}`);
-  const pairedClientWs = getClientWebsocket(clientId);
-
+function handleEffect(clientId, effectData) {
   const effectMsg = {
     clientId: clientId,
-    effect: effect
+    effect: effectData
   };
 
-  pairedClientWs.send(response(MSG_TYPES.EFFECT, effectMsg));
+  relayMessageToPairedClient(clientId, response(MessageTypes.Effect, effectMsg));
+}
+
+function handleLatencyAdjust(clientId, latencyAdjustmentData) {
+  const latencyAdjustmentMsg = {
+    clientId: clientId,
+    data: latencyAdjustmentData
+  };
+
+  relayMessageToPairedClient(clientId, response(MessageTypes.LatencyAdjustment, latencyAdjustmentMsg));
+}
+
+function relayMessageToPairedClient(clientId, msg) {
+  console.log(`sending msg to ${PairedClients[clientId]}`);
+  const pairedClientWs = getClientWebsocket(clientId);
+  pairedClientWs.send(msg);
+
 }
 
 function startGame() {
@@ -87,7 +102,7 @@ function startGame() {
 
 function notifyClientOfGameStart(clientId, opponentClientId, initData) {
   let ws = ClientWebSockets[clientId];
-  const resp = response(MSG_TYPES.START,
+  const resp = response(MessageTypes.Start,
     {
       clientId: clientId,
       opponentClientId: opponentClientId,
@@ -113,5 +128,5 @@ const response = (type, data = {}) => {
 };
 
 const error = (msg) => {
-  return response(MSG_TYPES.ERROR, {msg: msg});
+  return response(MessageTypes.Error, {msg: msg});
 };
